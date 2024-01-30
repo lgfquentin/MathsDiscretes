@@ -41,4 +41,21 @@ public class ASTVisitor extends PCFBaseVisitor<AST> {
         PCFParser.TermContext ANTLRTerms = ctx.term();
         return visit(ANTLRTerms);
     }
+
+
+    @Override
+    public AST visitVar(PCFParser.VarContext ctx) {
+        String name = ctx.getText();
+        return new Var(name);
+    }
+
+    @Override
+    public AST visitLet(PCFParser.LetContext ctx) {
+        Var var = new Var(ctx.ID().getText());
+        List<PCFParser.TermContext> ANTLRTerms = ctx.term();
+        List<Term> terms = new ArrayList<>();
+        for (PCFParser.TermContext ANTLRTerm : ANTLRTerms)
+            terms.add((Term) visit(ANTLRTerm));
+        return new Let(var, terms.get(0), terms.get(1));
+    }
 }
